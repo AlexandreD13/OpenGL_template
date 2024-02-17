@@ -1,18 +1,15 @@
 #include "FrameBufferObject.h"
 
-
-
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 
+#include <stb/stb_image.h>
 #include <image_DXT.h>
 
+FrameBufferObject::FrameBufferObject(std::string name,int _width,int _height) : m_Name(name), m_Width(_width),m_Height(_height) {
+    /**
+     *
+     */
 
-
-FrameBufferObject::FrameBufferObject(std::string name,int _width,int _height):
-	m_Name(name), m_Width(_width),m_Height(_height)
-{
-	
 	colorTexture = NULL;
 	depthTexture = NULL;
 	show_interface = false;
@@ -22,17 +19,12 @@ FrameBufferObject::FrameBufferObject(std::string name,int _width,int _height):
 	createTextureTargets(m_Width, m_Height);	
 }
 
-
-
-
-FrameBufferObject::~FrameBufferObject()
-{
+FrameBufferObject::~FrameBufferObject() {
 	destroy();
 	glDeleteFramebuffers(1,&m_FBOId);
 }
 
-void FrameBufferObject::createTextureTargets(int width,int height)
-{
+void FrameBufferObject::createTextureTargets(int width,int height) {
 	m_Width = width;
 	m_Height = height;
 
@@ -42,90 +34,84 @@ void FrameBufferObject::createTextureTargets(int width,int height)
 	glNamedFramebufferTexture(m_FBOId, GL_COLOR_ATTACHMENT0, colorTexture->getId(), 0);
 	glNamedFramebufferTexture(m_FBOId, GL_DEPTH_ATTACHMENT, depthTexture->getId(), 0);
 
-
-	if (!CheckFramebufferStatus())
-		std::cout << "Error in FBO :  " << info_text << endl;
-
+	if (!CheckFramebufferStatus()) {
+        std::cout << "Error in FBO :  " << info_text << endl;
+    }
 }
 
-void FrameBufferObject::resizeFBO(int width, int height)
-{
+void FrameBufferObject::resizeFBO(int width, int height) {
 	destroy();
 	createTextureTargets(width, height);
 }
 
-
-int FrameBufferObject::getWidth()
-{
+int FrameBufferObject::getWidth() {
 	return m_Width;
 }
-int FrameBufferObject::getHeight()
-{
+int FrameBufferObject::getHeight() {
 	return m_Height;
 }
 
-void FrameBufferObject::destroy()
-{
+void FrameBufferObject::destroy() {
 	delete colorTexture;
 	delete depthTexture;
 }
 
-bool FrameBufferObject::CheckFramebufferStatus()
-{
+bool FrameBufferObject::CheckFramebufferStatus() {
 	GLenum status;
 	status = (GLenum)glCheckNamedFramebufferStatus(m_FBOId, GL_FRAMEBUFFER);
 	bool evryok = false;
-	switch (status) {
-	case GL_FRAMEBUFFER_COMPLETE:
-		evryok = true;
-		break;
-	case GL_FRAMEBUFFER_UNSUPPORTED:
-		info_text += "Unsupported framebuffer format\n";
-		break;
-	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-		info_text += "Framebuffer incomplete, missing attachment\n";
-		break;
-	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-		info_text += "Framebuffer incomplete, attached images must have same dimensions\n";
-		break;
-	case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-		info_text += "Framebuffer incomplete, attached images must have same format\n";
-		break;
-	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-		info_text += "Framebuffer incomplete, missing draw buffer\n";
-		break;
-	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-		info_text += "Framebuffer incomplete, missing read buffer\n";
-		break;
-	default:
-		info_text += "Unknown Framebuffer Error";
+
+    switch (status) {
+        case GL_FRAMEBUFFER_COMPLETE:
+            evryok = true;
+            break;
+
+        case GL_FRAMEBUFFER_UNSUPPORTED:
+            info_text += "Unsupported framebuffer format\n";
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+            info_text += "Framebuffer incomplete, missing attachment\n";
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+            info_text += "Framebuffer incomplete, attached images must have same dimensions\n";
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+            info_text += "Framebuffer incomplete, attached images must have same format\n";
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+            info_text += "Framebuffer incomplete, missing draw buffer\n";
+            break;
+
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+            info_text += "Framebuffer incomplete, missing read buffer\n";
+            break;
+
+        default:
+            info_text += "Unknown Framebuffer Error";
 	}
-	return(evryok);
+
+    return(evryok);
 }
 
-void FrameBufferObject::enable()
-{
-	// Not efficient but here for code simplicity in IMN401
+void FrameBufferObject::enable() {
 	glViewport(0, 0, m_Width, m_Height);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBOId);
 }
 
-void FrameBufferObject::disable()
-{
-	// Not efficient but here for code simplicity in IMN401
+void FrameBufferObject::disable() {
 	glViewport(0, 0, scene->getViewportWidth(), scene->getViewportHeight());
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-Texture2D* FrameBufferObject::getColorTexture()
-{
+Texture2D* FrameBufferObject::getColorTexture() {
 	return colorTexture;
 }
 
-void FrameBufferObject::writeToFile(string filename)
-{
+void FrameBufferObject::writeToFile(string filename) {
 	LOG_INFO << " Writing file" << filename << std::endl;
 	int height = this->getHeight();
 	int width = this->getWidth();
@@ -136,34 +122,29 @@ void FrameBufferObject::writeToFile(string filename)
 	glReadPixels(0, 0, height, width, GL_RGBA, GL_UNSIGNED_BYTE, toto);
 	this->disable();
 	save_image_as_DDS(filename.c_str(), width, height, 4, toto);
-
-
 	FILE* ff = fopen(filename.c_str(), "ab");
 	fwrite(toto, sizeof(unsigned char) * tt, 1, ff);
-
 	LOG_INFO << " File exported" << std::endl;
-
-
 }
-void FrameBufferObject::displayInterface()
-{
-	if (show_interface)
-	{
-		if (!ImGui::Begin("MyFrameBuffer"))
-		{
+
+void FrameBufferObject::displayInterface() {
+	if (show_interface) {
+		if (!ImGui::Begin("MyFrameBuffer")) {
 			ImGui::End();
 			return;
 		}
+
 		int resolution = 0;
 
-		if (ImGui::Button("Resolution"))
-			ImGui::OpenPopup("selectResolution");
+		if (ImGui::Button("Resolution")) {
+            ImGui::OpenPopup("selectResolution");
+        }
+
 		ImGui::SameLine();
 		std::string currentResolution = (std::to_string(m_Width) + std::string(" X ") + std::to_string(m_Height));
-		//ImGui::Text(currentResolution.c_str());
 		glm::ivec2 newResolution = glm::ivec2(0);
-		if (ImGui::BeginPopup("selectResolution"))
-		{
+
+		if (ImGui::BeginPopup("selectResolution")) {
 			ImGui::Text("%s", currentResolution.c_str());
 			ImGui::Separator();
 			if (ImGui::Selectable("64 X 64"))
@@ -190,8 +171,7 @@ void FrameBufferObject::displayInterface()
 		to_save = ImGui::Button("Save");
 		ImGui::SameLine();
 		ImGui::Text("%s", buf);
-		if (ImGui::BeginPopupContextItem("Select Filename"))
-		{
+		if (ImGui::BeginPopupContextItem("Select Filename")) {
 			ImGui::InputText("", buf, 128);
 			if (ImGui::Button("Close"))
 				ImGui::CloseCurrentPopup();
@@ -207,8 +187,8 @@ void FrameBufferObject::displayInterface()
 		int max_height = min(128, m_Height);
 		ImTextureID tex = (void*)((uintptr_t)getColorTexture()->getId());
 		ImGui::Image(tex, ImVec2((float)max_width, (float)max_height), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-		if (ImGui::IsItemHovered())
-		{
+
+        if (ImGui::IsItemHovered()) {
 			ImGui::BeginTooltip();
 			max_width = min(512, m_Width);
 			max_height = min(512, m_Height);
@@ -216,11 +196,8 @@ void FrameBufferObject::displayInterface()
 			ImGui::Image(tex, ImVec2((float)max_width, (float)max_height), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 			ImGui::EndTooltip();
 		}
+
 		ImGui::SameLine();
-
-
 		ImGui::End();
-
 	}
-	
 }

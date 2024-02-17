@@ -1,17 +1,15 @@
-#ifndef _GEOEMTRICAL_Node_LOADER_
-#define _GEOEMTRICAL_Node_LOADER_
-
+#ifndef GEOEMTRICAL_Node_LOADER_
+#define GEOEMTRICAL_Node_LOADER_
 
 #include <string>
 using namespace std;
 class GeometricModel;
 
-class GeometricModelLoader
-{
+class GeometricModelLoader{
 	public:
-		GeometricModelLoader(){};
-		~GeometricModelLoader(){};
+		GeometricModelLoader()= default;
+		~GeometricModelLoader()= default;
 		virtual bool loadModel(string name,GeometricModel *model) = 0;
-
 };
+
 #endif

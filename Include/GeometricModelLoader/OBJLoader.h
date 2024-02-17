@@ -1,15 +1,17 @@
 #include "GeometricModelLoader.h"
+
 using namespace std;
+
 class GeometricModel;
 
-class OBJLoader : public GeometricModelLoader
-{
+class OBJLoader : public GeometricModelLoader {
 	public:
 		OBJLoader();
 		~OBJLoader();
-		virtual bool loadModel(string name,GeometricModel *model);
+		bool loadModel(string name,GeometricModel *model) override;
+
 	private:
-		void setupForTextureCoordinates(GeometricModel* model);
-		void computeNormals(GeometricModel* model);
-		void computeTangents(GeometricModel* model);
+		static void setupForTextureCoordinates(GeometricModel* model);
+		static void computeNormals(GeometricModel* model);
+		static void computeTangents(GeometricModel* model);
 };

@@ -1,5 +1,3 @@
-
-
 #ifdef USE_ASSIMP
 
 #ifndef _ASSIMPLOADER_
@@ -9,6 +7,7 @@
 #include <assimp/scene.h> // Output data structure
 #include <assimp/postprocess.h> // Post processing flags
 #include "GeometricModelLoader/GeometricModelLoader.h"
+
 using namespace std;
 class GeometricModel;
 
@@ -21,8 +20,6 @@ class AssimpLoader : public GeometricModelLoader
 	protected:
 		bool loadFromMesh(aiMesh* mesh, GeometricModel *model);
 };
-
-
 
 #endif
 

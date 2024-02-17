@@ -1,5 +1,5 @@
-#ifndef FRAME_
-#define FRAME_
+#ifndef __FRAME__
+#define __FRAME__
 
 #include <glm/glm.hpp>
 #include <vector>
